@@ -1,0 +1,8 @@
+train: ../datasets/baby_01/images/train
+val: ../datasets/baby_01/images/val
+
+# number of classes
+nc: 1
+
+# class names
+names: ['baby_head']
