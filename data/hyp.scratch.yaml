@@ -1,0 +1,34 @@
+# Hyperparameters for COCO training from scratch
+# python train.py --batch 40 --cfg yolov5m.yaml --weights '' --data coco.yaml --img 640 --epochs 300
+# See tutorials for hyperparameter evolution https://github.com/ultralytics/yolov5#tutorials
+
+
+lr0: 0.01  # initial learning rate (SGD=1E-2, Adam=1E-3)
+lrf: 0.02  # final OneCycleLR learning rate (lr0 * lrf)
+momentum: 0.937  # SGD momentum/Adam beta1
+weight_decay: 0.00001  # optimizer weight decay 5e-4
+warmup_epochs: 3.0  # warmup epochs (fractions ok)
+warmup_momentum: 0.8  # warmup initial momentum
+warmup_bias_lr: 0.1  # warmup initial bias lr
+box: 0.05  # box loss gain
+cls: 0.5  # cls loss gain
+cls_pw: 1.0  # cls BCELoss positive_weight
+obj: 1.0  # obj loss gain (scale with pixels)
+obj_pw: 1.0  # obj BCELoss positive_weight
+iou_t: 0.20  # IoU training threshold
+anchor_t: 4.0  # anchor-multiple threshold  目标框宽高和anchor宽高做比较，最大不能超过4，最小不能小1/4
+fl_gamma: 0.0  # focal loss gamma (efficientDet default gamma=1.5)
+
+#数据集增强
+hsv_h: 0.015  # image HSV-Hue augmentation (fraction) 色调
+hsv_s: 0.7  # image HSV-Saturation augmentation (fraction) 饱和度
+hsv_v: 0.4  # image HSV-Value augmentation (fraction) 曝光
+degrees: 0.0  # image rotation (+/- deg) （旋转）角度
+translate: 0.1  # image translation (+/- fraction) 平移
+scale: 0.5  # image scale (+/- gain)缩放尺度因子
+shear: 0.0  # image shear (+/- deg) 错切/非垂直投影
+perspective: 0.0  # image perspective (+/- fraction), range 0-0.001 透视变化
+flipud: 0.0  # image flip up-down (probability)上下翻转
+fliplr: 0.5  # image flip left-right (probability) 左右翻转
+mosaic: 1.0  # image mosaic (probability) 4图拼接 （mosaic：马赛克图）
+mixup: 0.0  # image mixup (probability) 图像融合（2个不同透明度的图片合起来）
