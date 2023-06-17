@@ -66,6 +66,7 @@ def exif_size(img):
 def create_dataloader(path, imgsz, batch_size, stride, single_cls=False, hyp=None, augment=False, cache=False, pad=0.0,
                       rect=False, rank=-1, workers=8, image_weights=False, quad=False, prefix=''):
     # Make sure only the first process in DDP process the dataset first, and the following others can use the cache
+    print("##########################################1")
     with torch_distributed_zero_first(rank):
         #数据集增强处理
         dataset = LoadImagesAndLabels(path, imgsz, batch_size,
@@ -78,8 +79,10 @@ def create_dataloader(path, imgsz, batch_size, stride, single_cls=False, hyp=Non
                                       pad=pad,
                                       image_weights=image_weights,
                                       prefix=prefix)
+    print("##########################################2")
 
     batch_size = min(batch_size, len(dataset))
+    print("batch_size:", batch_size)
     nw = min([os.cpu_count(), batch_size if batch_size > 1 else 0, workers])  # number of workers
     sampler = torch.utils.data.distributed.DistributedSampler(dataset) if rank != -1 else None
     loader = torch.utils.data.DataLoader if image_weights else InfiniteDataLoader
@@ -129,27 +132,34 @@ class _RepeatSampler(object):
 
 class LoadImages:  # for inference
     def __init__(self, path, img_size=640, stride=32):
-        p = str(Path(path).absolute())  # os-agnostic absolute path
+        p = str(Path(path).absolute())  # os-agnostic absolute path        
+        # glob.glab: 返回所有匹配的文件路径列表   files: 提取图片所有路径
         if '*' in p:
+            # 如果p是采样正则化表达式提取图片/视频, 可以使用glob获取文件路径
             files = sorted(glob.glob(p, recursive=True))  # glob
         elif os.path.isdir(p):
+            # 如果p是一个文件夹，使用glob获取全部文件路径
             files = sorted(glob.glob(os.path.join(p, '*.*')))  # dir
         elif os.path.isfile(p):
+            # 如果p是文件则直接获取
             files = [p]  # files
         else:
             raise Exception(f'ERROR: {p} does not exist')
 
+        # images: 目录下所有图片的图片名  videos: 目录下所有视频的视频名
         images = [x for x in files if x.split('.')[-1].lower() in img_formats]
         videos = [x for x in files if x.split('.')[-1].lower() in vid_formats]
+        # 图片与视频数量
         ni, nv = len(images), len(videos)
 
         self.img_size = img_size
-        self.stride = stride
-        self.files = images + videos
+        self.stride = stride  # 最大的下采样率
+        self.files = images + videos # 整合图片和视频路径到一个列表
         self.nf = ni + nv  # number of files
-        self.video_flag = [False] * ni + [True] * nv
-        self.mode = 'image'
+        self.video_flag = [False] * ni + [True] * nv # 是不是video
+        self.mode = 'image' # 默认是读image模式
         if any(videos):
+             # 判断有没有video文件  如果包含video文件，则初始化opencv中的视频模块，cap=cv2.VideoCapture等
             self.new_video(videos[0])  # new video
         else:
             self.cap = None
@@ -199,10 +209,13 @@ class LoadImages:  # for inference
         return path, img, img0, self.cap
 
     def new_video(self, path):
+        # 记录帧数
         self.frame = 0
+        # 初始化视频对象
         self.cap = cv2.VideoCapture(path)
+        # 得到视频文件中的总帧数
         self.frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
-
+        print("path", path, "frames:", self.frames)
     def __len__(self):
         return self.nf  # number of files
 

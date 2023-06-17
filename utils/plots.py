@@ -116,7 +116,14 @@ def plot_wh_methods():  # from utils.plots import *; plot_wh_methods()
 
 
 def output_to_target(output):
-    # Convert model output to target format [batch_id, class_id, x, y, w, h, conf]
+    """用在test.py中进行绘制前3个batch的预测框predictions 因为只有predictions需要修改格式 target是不需要修改格式的
+    将经过nms后的output [num_obj，x1y1x2y2+conf+cls] -> [num_obj, batch_id+class+x+y+w+h+conf] 转变格式
+    以便在plot_images中进行绘图 + 显示label
+    Convert model output to target format [batch_id, class_id, x, y, w, h, conf]
+    :params output: list{tensor(8)}分别对应着当前batch的8(batch_size)张图片做完nms后的结果
+                    list中每个tensor[n, 6]  n表示当前图片检测到的目标个数  6=x1y1x2y2+conf+cls
+    :return np.array(targets): [num_targets, batch_id+class+xywh+conf]  其中num_targets为当前batch中所有检测到目标框的个数
+    """
     targets = []
     for i, o in enumerate(output):
         for *box, conf, cls in o.cpu().numpy():
@@ -125,7 +132,21 @@ def output_to_target(output):
 
 
 def plot_images(images, targets, paths=None, fname='images.jpg', names=None, max_size=640, max_subplots=16):
-    # Plot image grid with labels
+    """用在test.py中进行绘制前3个batch的ground truth和预测框predictions(两个图) 一起保存
+    将整个batch的labels都画在这个batch的images上
+    Plot image grid with labels
+    :params images: 当前batch的所有图片  Tensor [batch_size, 3, h, w]  且图片都是归一化后的
+    :params targets:  直接来自target: Tensor[num_target, img_index+class+xywh]  [num_target, 6]
+                      来自output_to_target: Tensor[num_pred, batch_id+class+xywh+conf] [num_pred, 7]
+    :params paths: tuple  当前batch中所有图片的地址
+                   如: '..\\datasets\\coco128\\images\\train2017\\000000000315.jpg'
+    :params fname: 最终保存的文件路径 + 名字  runs\train\exp8\train_batch2.jpg
+    :params names: 传入的类名 从class index可以相应的key值  但是默认是None 只显示class index不显示类名
+    :params max_size: 图片的最大尺寸640  如果images有图片的大小(w/h)大于640则需要resize 如果都是小于640则不需要resize
+    :params max_subplots: 最大子图个数 16
+    :params mosaic: 一张大图  最多可以显示max_subplots张图片  将总多的图片(包括各自的label框框)一起贴在一起显示
+                    mosaic每张图片的左上方还会显示当前图片的名字  最好以fname为名保存起来
+    """
 
     if isinstance(images, torch.Tensor):
         images = images.cpu().float().numpy()

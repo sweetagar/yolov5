@@ -11,11 +11,14 @@
 
 # train and val data as 1) directory: path/images/, 2) file: path/images.txt, or 3) list: [path1/images/, path2/images/]
 #train: ./data/coco/person_1.5w.txt
-train: ./data/coco/train2017.txt
+#./data/coco/train2017.txt
+train: /home/ubuntu/AI/datasets/COCO_data/images/person/data/ImageSets/train2017.txt
 #val: ./data/coco/val2017.txt #../coco/val2017_test.txt  # 5000 images
-val: ./data/coco/val2017.txt
+#./data/coco/val2017.txt
+val: /home/ubuntu/AI/datasets/COCO_data/images/person/data/ImageSets/val2017.txt
 #test: ../coco/test-dev2017.txt  # 20288 of 40670 images, submit to https://competitions.codalab.org/competitions/20794
-test: ../coco/test2017.txt
+#../coco/test2017.txt
+test: /home/ubuntu/AI/datasets/COCO_data/images/person/data/ImageSets/test2017.txt
 
 # number of classes
 nc: 1

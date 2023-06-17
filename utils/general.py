@@ -57,8 +57,13 @@ class timeout(contextlib.ContextDecorator):
 
 
 def set_logging(rank=-1, verbose=True):
+    """广泛使用在train.py、val.py、detect.py等文件的main函数的第一步
+    对日志的设置(format、level)等进行初始化
+    """
     logging.basicConfig(
+        # 设置日志输出的格式和内容  只打印日志信息
         format="%(message)s",
+        # 设置日志级别  rank不为-1或0时设置输出级别level为WARN  为-1或0时设置级别为INFO
         level=logging.INFO if (verbose and rank in [-1, 0]) else logging.WARN)
 
 
@@ -116,13 +121,22 @@ def check_online():
 
 def check_git_status(err_msg=', for updates see https://github.com/ultralytics/yolov5'):
     # Recommend 'git pull' if code is out of date
+    """用在train.py的main函数的一开始
+    检查当前代码版本是否是最新的   如果不是最新的 会提示使用git pull命令进行升级
+    """
+    # 彩色显示github单词  github:
     print(colorstr('github: '), end='')
     try:
+        # 检查电脑有没有安装git仓库  没有安装直接报异常并输出异常信息
         assert Path('.git').exists(), 'skipping check (not a git repository)'
+        # 检查电脑系统有没有安装docker环境变量 没有直接报异常并输出异常信息
         assert not is_docker(), 'skipping check (Docker image)'
+        # 检查主机是否联网
         assert check_online(), 'skipping check (offline)'
 
+        # 创建cmd命令
         cmd = 'git fetch && git config --get remote.origin.url'
+        # 并创建子进程进行执行cmd命令  返回执行结果  时限5秒
         url = check_output(cmd, shell=True, timeout=5).decode().strip().rstrip('.git')  # git fetch
         branch = check_output('git rev-parse --abbrev-ref HEAD', shell=True).decode().strip()  # checked out
         n = int(check_output(f'git rev-list {branch}..origin/master --count', shell=True))  # commits behind
@@ -133,6 +147,7 @@ def check_git_status(err_msg=', for updates see https://github.com/ultralytics/y
             s = f'up to date with {url} ✅'
         print(emojis(s))  # emoji-safe
     except Exception as e:
+        # 只要报任何异常 直接输出异常信息
         print(f'{e}{err_msg}')
 
 
@@ -203,9 +218,15 @@ def check_imshow():
 
 def check_file(file):
     # Search/download file (if necessary) and return path
+    """用在train.py、detect.py、test.py等文件中检查本地有没有这个文件
+    检查相关文件路径能否找到文件 并返回文件名
+    Search/download file (if necessary) and return path
+    """
     file = str(file)  # convert to str()
+     # 如果传进来的是文件或者是’‘, 直接返回文件名str
     if Path(file).is_file() or file == '':  # exists
         return file
+    # 如果传进来的以 'http:/' 或者 'https:/' 开头的url地址, 就下载    
     elif file.startswith(('http:/', 'https:/')):  # download
         url = str(Path(file)).replace(':/', '://')  # Pathlib turns :// -> :/
         file = Path(urllib.parse.unquote(file)).name.split('?')[0]  # '%2F' to '/', split https://url.com/file.txt?auth
@@ -214,9 +235,12 @@ def check_file(file):
         assert Path(file).exists() and Path(file).stat().st_size > 0, f'File download failed: {url}'  # check
         return file
     else:  # search
+        # 否则, 传进来的就是当前项目下的一个全局路径 查找匹配的文件名 返回第一个
+        # glob.glob: 匹配当前项目下的所有项目 返回所有符合条件的文件files
         files = glob.glob('./**/' + file, recursive=True)  # find file
         assert len(files), f'File not found: {file}'  # assert file was found
         assert len(files) == 1, f"Multiple files match '{file}', specify exact path: {files}"  # assert unique
+        # 返回第一个匹配到的文件名
         return files[0]  # return file
 
 
@@ -294,7 +318,10 @@ def one_cycle(y1=0.0, y2=1.0, steps=100):
 
 def colorstr(*input):
     # Colors a string https://en.wikipedia.org/wiki/ANSI_escape_code, i.e.  colorstr('blue', 'hello world')
+    # 如果输入长度为1, 就是没有选择颜色 则选择默认颜色设置 blue + bold
+    # args: 输入的颜色序列 string: 输入的字符串
     *args, string = input if len(input) > 1 else ('blue', 'bold', input[0])  # color arguments, string
+    # 定义一些基础的颜色 和 字体设置
     colors = {'black': '\033[30m',  # basic colors
               'red': '\033[31m',
               'green': '\033[32m',
@@ -314,6 +341,7 @@ def colorstr(*input):
               'end': '\033[0m',  # misc
               'bold': '\033[1m',
               'underline': '\033[4m'}
+     # 把输出的开头和结尾加上颜色  命令行输出显示会更加好看         
     return ''.join(colors[x] for x in args) + f'{string}' + colors['end']
 
 
