@@ -26,4 +26,4 @@ pandas
 
 # extras --------------------------------------
 thop  # FLOPS computation
-pycocotools-windows>=2.0  # COCO mAP
+#pycocotools-windows>=2.0  # COCO mAP
