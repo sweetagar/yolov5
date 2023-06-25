@@ -1,1 +1,0 @@
-2023-06-16_16:48:54.049030: E onnx2magik.cc:25-create_onnx_model] read_proto_from_binary failed! ==> ../runs/train/baby-head-32bit/weights/best.onnx

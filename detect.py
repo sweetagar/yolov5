@@ -93,7 +93,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
     print(f'chkpt={aaaaa}')
     
     # 给模型分配stride属性
-    model = Model(chkpt['model'].yaml, ch=3, nc=1).cuda()
+    model = Model(chkpt['model'].yaml, ch=3, nc=80).cuda()
     state_dict = chkpt['ema' if chkpt.get('ema') else 'model'].float().state_dict()  # to FP32
     model.load_state_dict(state_dict, strict=True)
     model.eval()

@@ -13,7 +13,7 @@ def main():
     args = parser.parse_args()
 
     chkpt = torch.load(args.weights)
-    model = Model(chkpt['model'].yaml, ch=3, nc=1).cuda()
+    model = Model(chkpt['model'].yaml, ch=3, nc=2).cuda()
     state_dict = chkpt['ema' if chkpt.get('ema') else 'model'].float().state_dict()  # to FP32
     model.load_state_dict(state_dict, strict=True)
     model.eval()

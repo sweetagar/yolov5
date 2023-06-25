@@ -1,17 +1,16 @@
 export NCCL_IB_DISABLE=1
 export NCCL_DEBUG=info
-#GPUS=6
 GPUS=1
+#--resume ./runs/train/coco-32bit/weights/last.pt
 
-cp ./models/common_32bit.py ./models/common.py
+sed -i 's/bita = .*/bita = 32/g' models/common.py
 
 if [[ ${1} = "baby_nc2" ]]
 then
-#32bit:
-#--resume ./runs/train/coco-32bit/weights/last.pt 
+  sed -i 's/nc: .*/nc: 2/g' models/yolov5s.yaml
 	python3 -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=60051 train.py \
     --data data/baby-nc2.yaml\
-    --cfg models/yolov5s-classic-80.yaml \
+    --cfg models/yolov5s.yaml \
     --weights '' \
     --batch-size 8 \
     --hyp data/hyp.scratch.yaml \
@@ -20,53 +19,19 @@ then
     --device 0
 elif [[ ${1} = "coco_nc80" ]]
 then
+  sed -i 's/nc: .*/nc: 80/g' models/yolov5s.yaml
 	python3 -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=60051 train.py \
-    --resume ./runs/train/coco-32bit/weights/last.pt \
     --data data/coco.yaml\
-    --cfg models/yolov5s-classic-80.yaml \
+    --cfg models/yolov5s.yaml \
     --weights '' \
     --batch-size 8 \
     --hyp data/hyp.scratch.yaml \
     --project ./runs/train/coco-32bit \
     --epochs 300 \
     --device 0
-elif [[ ${1} = "coco_nc1" ]]
-then
-    python3 -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=60051 train.py \
-    --data data/coco-person.yaml\
-    --cfg models/yolov5s-classic-1.yaml \
-    --weights weights/best.pt \
-    --batch-size 8 \
-    --hyp data/hyp.scratch.yaml \
-    --project ./runs/train/coco-person-32bit \
-    --epochs 5 \
-    --device 0
-elif [[ ${1} = "coco128_nc80" ]]
-then
-	python3 -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=60051 train.py \
-    --data data/coco128.yaml\
-    --cfg models/yolov5s-classic-80.yaml \
-    --weights '/home/ubuntu/AI/yolov5-magic/runs/train/coco-32bit/weights/best.pt'\
-    --batch-size 2 \
-    --hyp data/hyp.scratch.yaml \
-    --project ./runs/train/coco128-32bit \
-    --epochs 300 \
-    --device 0
-elif [[ ${1} = "coco128_nc1" ]]
-then
-	python3 -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=60051 train.py \
-    --data data/coco128-persion.yaml\
-    --cfg models/yolov5s.yaml \
-    --weights weights/best.pt \
-    --batch-size 32 \
-    --hyp data/hyp.scratch.yaml \
-    --project ./runs/train/coco128-persion-32bit \
-    --epochs 300 \
-    --device 0	    
 else
-	echo "./train.sh baby_nc2"
-	echo "./train.sh coco_nc80"
-	echo "./train.sh coco_nc1"
+	echo "./train_32bit.sh baby_nc2"
+	echo "./train_32bit.sh coco_nc80"
 fi
 
 
