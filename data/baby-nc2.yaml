@@ -1,6 +1,6 @@
-train: /home/ubuntu/datasets/baby_nc2/train 
-val: /home/ubuntu/datasets/baby_nc2/valid 
-test: /home/ubuntu/datasets/baby_nc2/test        
+train: ../datasets/baby_nc2/train 
+val: ../datasets/baby_nc2/valid 
+test: ../datasets/baby_nc2/test        
 
 nc: 2
 names: ['baby_head', 'ear']

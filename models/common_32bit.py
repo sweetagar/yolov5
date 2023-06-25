@@ -19,7 +19,7 @@ from utils.torch_utils import time_synchronized
 #=====================
 from ingenic_magik_trainingkit.QuantizationTrainingPlugin.python import ops
 
-bita = 8
+bita = 32
 
 if bita==32:
     bitw = 32
