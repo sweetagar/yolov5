@@ -4,15 +4,14 @@ export NCCL_DEBUG=info
 GPUS=1
 
 #32bit:
-    #--resume ./runs/train/coco-32bit/weights/last.pt \
+#--resume ./runs/train/coco-32bit/weights/last.pt 
 python3 -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=60051 train.py \
-    --resume ./runs/train/coco-32bit/weights/last.pt \
-    --data data/coco.yaml\
+    --data data/baby-nc2.yaml\
     --cfg models/yolov5s-classic-80.yaml \
     --weights '' \
     --batch-size 32 \
     --hyp data/hyp.scratch.yaml \
-    --project ./runs/train/coco-32bit \
+    --project ./runs/train/baby-nc2-32bit \
     --epochs 300 \
     --device 0
 

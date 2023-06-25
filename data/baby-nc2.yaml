@@ -1,0 +1,13 @@
+train: /home/ubuntu/datasets/baby_nc2/train 
+val: /home/ubuntu/datasets/baby_nc2/valid 
+test: /home/ubuntu/datasets/baby_nc2/test        
+
+nc: 2
+names: ['baby_head', 'ear']
+
+#roboflow:
+#  workspace: trial-kbztl
+#  project: test_02-6yhdo
+#  version: 2
+#  license: CC BY 4.0
+#  url: https://universe.roboflow.com/trial-kbztl/test_02-6yhdo/dataset/2

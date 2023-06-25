@@ -7,8 +7,8 @@
 
 
 # 数据集源路径root、训练集、验证集、测试集地址
-train: /home/ubuntu/AI/datasets/COCO_data/images/train2017  # root下的训练集地址 128 images
-val: /home/ubuntu/AI/datasets/COCO_data/images/val2017  # root下的验证集地址 128 images
+train: /home/ubuntu/datasets/coco/images/train2017  # root下的训练集地址 128 images
+val: /home/ubuntu/datasets/coco/images/val2017  # root下的验证集地址 128 images
 test:             # root下的验证集地址 128 images
 
 # 数据集类别信息

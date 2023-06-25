@@ -8,10 +8,10 @@ python3 -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=60051 t
     --data data/coco128-persion.yaml\
     --cfg models/yolov5s.yaml \
     --weights weights/best.pt \
-    --batch-size 6 \
+    --batch-size 32 \
     --hyp data/hyp.scratch.yaml \
     --project ./runs/train/coco128-persion-32bit \
-    --epochs 100 \
+    --epochs 300 \
     --device 0
 
 #8bit:

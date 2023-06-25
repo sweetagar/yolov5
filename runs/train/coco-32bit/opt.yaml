@@ -2,8 +2,8 @@ weights: ''
 cfg: models/yolov5s-classic-80.yaml
 data: data/coco.yaml
 hyp: data/hyp.scratch.yaml
-epochs: 5
-batch_size: 6
+epochs: 300
+batch_size: 32
 img_size:
 - 640
 - 640

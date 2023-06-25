@@ -4,18 +4,15 @@ export NCCL_DEBUG=info
 GPUS=1
 
 #32bit:
-    #--resume ./runs/train/coco-32bit/weights/last.pt \
 python3 -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=60051 train.py \
-    --resume ./runs/train/coco-32bit/weights/last.pt \
-    --data data/coco.yaml\
+    --data data/coco128.yaml\
     --cfg models/yolov5s-classic-80.yaml \
-    --weights '' \
-    --batch-size 32 \
+    --weights '/home/ubuntu/AI/yolov5-magic/runs/train/coco-32bit/weights/best.pt'\
+    --batch-size 2 \
     --hyp data/hyp.scratch.yaml \
-    --project ./runs/train/coco-32bit \
+    --project ./runs/train/coco128-32bit \
     --epochs 300 \
     --device 0
-
 
 #8bit:
 #python3 -m torch.distributed.launch --nproc_per_node=$GPUS --master_port=60051 train.py \
