@@ -1,4 +1,4 @@
-TOPDIR ?= ../../../../../../InferenceKit/nna2/mips720-glibc229/T41/
+TOPDIR ?= ./
 CROSS_COMPILE:=mips-linux-gnu-
 
 CC = $(CROSS_COMPILE)gcc
@@ -74,7 +74,7 @@ else ifeq ($(build_type), nmem)
 endif
 
 OBJS := inference.o
-
+#OBJS := inference_nv12.o
 
 %.o:%.cpp
 	$(CPP) $(INCLUDES) $(CXXFLAGS) -o $@ -c $^

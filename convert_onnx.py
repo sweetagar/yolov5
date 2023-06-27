@@ -20,6 +20,7 @@ def main():
     # model = chkpt['ema' if chkpt.get('ema') else 'model'].float().cuda()
 
     dummy_input = Variable(torch.randn(1, 3, 416, 416)).cuda()
+    #dummy_input = Variable(torch.randn(1, 3, 460, 460)).cuda()
     dst_path = args.weights.replace(args.weights.split('.')[-1], "onnx")
     #torch.onnx.export(model, dummy_input, dst_path, verbose=False, enable_onnx_checker=False, do_constant_folding=False, operator_export_type=torch.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK)
     torch.onnx.export(model, dummy_input, dst_path, verbose=False, opset_version=9,enable_onnx_checker=False, do_constant_folding=False, operator_export_type=torch.onnx.OperatorExportTypes.ONNX_ATEN_FALLBACK)

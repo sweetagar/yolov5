@@ -93,7 +93,8 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
     print(f'chkpt={aaaaa}')
     
     # 给模型分配stride属性
-    model = Model(chkpt['model'].yaml, ch=3, nc=80).cuda()
+    model = Model(chkpt['model'].yaml, ch=3).cuda() #by ronsyao
+    #model = Model(chkpt['model'].yaml, ch=3, nc=2).cuda()
     state_dict = chkpt['ema' if chkpt.get('ema') else 'model'].float().state_dict()  # to FP32
     model.load_state_dict(state_dict, strict=True)
     model.eval()
@@ -119,7 +120,7 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
     # 这里考虑到目标检测完是否需要第二次分类，自己可以考虑自己的任务自己加上  但是这里默认是False的 我们默认不使用
     classify = False #不需要resnet50的权重
     if classify:
-        modelc = load_classifier(name='resnet50', n=2)  # initialize
+        modelc = load_classifier(name='resnet50', n=80)  # initialize
         modelc.load_state_dict(torch.load('resnet50.pt', map_location=device)['model']).to(device).eval()
 
     # ===================================== 3、加载推理数据 =====================================
@@ -159,10 +160,10 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
         magik_input = img.cpu().numpy()
         magik_input = np.transpose(magik_input, (0, 2, 3, 1)) * 255
         magik_input = np.round(magik_input)
-        np.save("./magik_input.npy", magik_input)
+        np.save("./transform_sample/out/magik_input.npy", magik_input)
         magik_input_uint8 = magik_input.astype(np.uint8)
         magik_input_shape = magik_input_uint8.shape
-        magik_input_path = "./transform_sample/venus_sample_yolov5s/magik_input_nhwc_%d_%d_%d_%d.bin" % (magik_input_shape[0], magik_input_shape[1], magik_input_shape[2], magik_input_shape[3])
+        magik_input_path = "./transform_sample/out/magik_input_nhwc_%d_%d_%d_%d.bin" % (magik_input_shape[0], magik_input_shape[1], magik_input_shape[2], magik_input_shape[3])
         magik_input_uint8.tofile(magik_input_path)
 
         # 5.2、对每张图片/视频进行前向推理

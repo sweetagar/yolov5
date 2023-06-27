@@ -1,0 +1,13 @@
+train: ../datasets/baby_nc1/train
+val: ../datasets/baby_nc1/valid
+test: ../datasets/baby_nc1/test
+
+nc: 1
+names: ['baby_head']
+
+#roboflow:
+#  workspace: trial-kbztl
+#  project: test_02-6yhdo
+#  version: 2
+#  license: CC BY 4.0
+#  url: https://universe.roboflow.com/trial-kbztl/test_02-6yhdo/dataset/2

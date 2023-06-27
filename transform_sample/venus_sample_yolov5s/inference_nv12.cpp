@@ -88,6 +88,7 @@ void trans_coords(std::vector<magik::venus::ObjBbox_t> &in_boxes, PixelOffset &p
 void generateBBox(std::vector<venus::Tensor> out_res, std::vector<magik::venus::ObjBbox_t>& candidate_boxes, int img_w, int img_h);
 
 //./venus_yolov5s_bin_uclibc_release_nv12 yolov5s_t40_magik.bin 10_w1024_h714.nv12 1024 714
+//./venus_yolov5s_bin_uclibc_release  ./out/yolov5s_t41_magik.bin  ./10_w1024_h714.nv12 1024 714
 int main(int argc, char **argv) {
     /*set*/
     cpu_set_t mask;
@@ -290,12 +291,14 @@ int main(int argc, char **argv) {
     for (int i = 0; i < int(output_boxes.size()); i++) {
         auto person = output_boxes[i];
         printf("box:   ");
-        printf("%d ",(int)person.box.x0);
-        printf("%d ",(int)person.box.y0);
-        printf("%d ",(int)person.box.x1);
-        printf("%d ",(int)person.box.y1);
-        printf("%.2f ",person.score);
+        printf("x0:%d ",(int)person.box.x0);
+        printf("y0:%d ",(int)person.box.y0);
+        printf("x1:%d ",(int)person.box.x1);
+        printf("y1:%d ",(int)person.box.y1);
+        printf("score:%.2f ",person.score);
+		printf("class_id:[%d]",person.class_id);
         printf("\n");
+
     }
 
 ret = venus::venus_deinit();
@@ -309,7 +312,7 @@ if (0 != ret) {
 void generateBBox(std::vector<venus::Tensor> out_res, std::vector<magik::venus::ObjBbox_t>& candidate_boxes, int img_w, int img_h){
 
   float person_threshold = 0.3;
-  int classes = 1;
+  int classes = 2;
   float nms_threshold = 0.6;
   std::vector<float> strides = {8.0, 16.0, 32.0};
   int box_num = 3;
