@@ -189,7 +189,7 @@ class ComputeLoss:
         #每一层有多少个anchor，na=3，一共有个正样本
         na, nt = self.na, targets.shape[0]  # number of anchors, targets
 
-        #最后要得四个东西输出
+        #最后要得四个东西输出ot
         tcls, tbox, indices, anch = [], [], [], []
         #单行7列数组
         gain = torch.ones(7, device=targets.device)  # normalized to gridspace gain
@@ -207,7 +207,8 @@ class ComputeLoss:
         #遍历预测detect层，有3层
         for i in range(self.nl):
             #拿到对应层的anchor
-            anchors = self.anchors[i]
+            #anchors = self.anchors[i]
+            anchors, shape = self.anchors[i], p[i].shape
             #拿到对应层tensor的宽高，放到gpin2-5这几列
             gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
 
@@ -218,13 +219,13 @@ class ComputeLoss:
                 # Matches
                 # 目标边框筛选
                 #得到目标边框的宽和高于anchor宽高的比例
-                r = t[:, :, 4:6] / anchors[:, None]  # wh ratio 
+                r = t[:, :, 4:6] / anchors[:, None]  # wh ratio
                 #限制目标边框值， 比较最大值再和anchor_t=4超参做比较，就是最大不能超过4倍，最小不会超过1/4，
-                j = torch.max(r, 1. / r).max(2)[0] < self.hyp['anchor_t']  # compare 
+                j = torch.max(r, 1. / r).max(2)[0] < self.hyp['anchor_t']  # compare
                 # j = wh_iou(anchors, t[:, 4:6]) > model.hyp['iou_t']  # iou(3,n)=wh_iou(anchors(3,2), gwh(n,2))
                 t = t[j]  # filter
 
-                # Offsets 
+                # Offsets
                 # 提高正样本比例的操作，8个grid变成8+16个
                 gxy = t[:, 2:4]  # grid xy
                 gxi = gain[[2, 3]] - gxy  # inverse
@@ -249,7 +250,8 @@ class ComputeLoss:
             # Append
             a = t[:, 6].long()  # anchor indices
             #batch id，grid的坐标
-            indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            #indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            indices.append((b, a, gj.clamp_(0, shape[2] - 1), gi.clamp_(0, shape[3] - 1)))   # image, anchor, grid
             # 所有正样本中心点x,y的偏移量
             tbox.append(torch.cat((gxy - gij, gwh), 1))  # box
             anch.append(anchors[a])  # anchors
