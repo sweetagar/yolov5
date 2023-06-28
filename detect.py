@@ -157,14 +157,14 @@ def run(weights='yolov5s.pt',  # model.pt path(s)
             img = img.unsqueeze(0)
 
         #君正推理库用    
-        magik_input = img.cpu().numpy()
-        magik_input = np.transpose(magik_input, (0, 2, 3, 1)) * 255
-        magik_input = np.round(magik_input)
-        np.save("./transform_sample/out/magik_input.npy", magik_input)
-        magik_input_uint8 = magik_input.astype(np.uint8)
-        magik_input_shape = magik_input_uint8.shape
-        magik_input_path = "./transform_sample/out/magik_input_nhwc_%d_%d_%d_%d.bin" % (magik_input_shape[0], magik_input_shape[1], magik_input_shape[2], magik_input_shape[3])
-        magik_input_uint8.tofile(magik_input_path)
+        #magik_input = img.cpu().numpy()
+        #magik_input = np.transpose(magik_input, (0, 2, 3, 1)) * 255
+        #magik_input = np.round(magik_input)
+        #np.save("./transform_sample/out/magik_input.npy", magik_input)
+        #magik_input_uint8 = magik_input.astype(np.uint8)
+        #magik_input_shape = magik_input_uint8.shape
+        #magik_input_path = "./transform_sample/out/magik_input_nhwc_%d_%d_%d_%d.bin" % (magik_input_shape[0], magik_input_shape[1], magik_input_shape[2], magik_input_shape[3])
+        #magik_input_uint8.tofile(magik_input_path)
 
         # 5.2、对每张图片/视频进行前向推理
         t1 = time_synchronized()        
